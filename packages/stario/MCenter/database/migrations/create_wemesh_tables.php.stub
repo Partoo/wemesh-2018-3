@@ -1,0 +1,103 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateWemeshTables extends Migration
+{
+    /**
+     * Wemesh系统相关表：
+     *
+     * @return void
+     */
+    public function up()
+    {
+        $this->down();
+        // User
+        Schema::create('users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name', 20);
+            $table->string('mobile', 20)->unique();
+//            $table->string('nickname', 20)->default('未名');
+            $table->string('wx_id')->nullable();
+            $table->unsignedBigInteger('org_id');
+            $table->string('email')->unique()->nullable();
+            $table->string('password');
+            $table->string('last_login_ip', 15)->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->unsignedTinyInteger('status')->default(1);
+            $table->rememberToken();
+            $table->timestamps();
+            $table->index(['wx_id', 'org_id']);
+        });
+
+        // Organization
+        Schema::create('organizations', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name', 25);
+            $table->string('domain', 25);
+            $table->string('address', 100);
+            $table->string('wx_appid')->nullable();
+            $table->unsignedBigInteger('admin_id');
+            $table->unsignedTinyInteger('org_type_id')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('org_types', function (Blueprint $table) {
+            $table->tinyIncrements('id');
+            $table->string('name', 30);
+        });
+
+        // Module
+        Schema::create('modules', function (Blueprint $table) {
+            $table->tinyIncrements('id');
+            $table->string('title', 20);
+            $table->string('desc', 50)->nullable();
+            $table->json('menu');
+            $table->decimal('price', 6, 2);
+            $table->timestamps();
+        });
+
+        // Customer & Module Pivot
+        Schema::create('org_has_modules', function (Blueprint $table) {
+            $table->unsignedTinyInteger('module_id');
+            $table->unsignedBigInteger('org_id');
+            $table->dateTime('started_at');
+            $table->dateTime('ended_at');
+            $table->timestamps();
+
+            $table->foreign('module_id')
+                ->references('id')
+                ->on('modules')
+                ->onDelete('cascade');
+
+            $table->primary(['module_id', 'org_id']);
+        });
+
+        // Password Reset
+        Schema::create('password_resets', function (Blueprint $table) {
+            $table->string('email')->index();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::disableForeignKeyConstraints();
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists('organizations');
+        Schema::dropIfExists('org_types');
+        Schema::dropIfExists('modules');
+        Schema::dropIfExists('org_has_modules');
+        Schema::enableForeignKeyConstraints();
+    }
+}

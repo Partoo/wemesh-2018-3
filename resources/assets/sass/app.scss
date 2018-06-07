@@ -1,0 +1,54 @@
+// Fonts
+//@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+@import "wemesh";
+
+a {
+  outline: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-30 {
+  margin-bottom: 30px;
+}
+
+header {
+  padding-top: 12px;
+}
+
+.sticky {
+  background: #fff;
+  box-shadow: 12px 5px 12px 3px rgba(0, 0, 0, 0.24);
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.logo img {
+  height: 50px;
+}
+
+.img-hover-enlarge img {
+  transition: all 2s;
+}
+
+.img-hover-enlarge:hover img {
+  transform: scale(1.1);
+}
+
+.logo-title {
+  float: right;
+  margin-top: 4px;
+  .active {
+    background-color: #00c4b0 !important;
+    color: #fff !important;
+  }
+}
+
+.section-title {
+  text-transform: uppercase;
+  max-width: 550px;
+  margin: 0 auto;
+}
